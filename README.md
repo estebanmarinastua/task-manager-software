@@ -1,86 +1,180 @@
-📋 Task Manager - CRUD
-Este proyecto es una aplicación web simple de gestión de tareas (Task Manager) desarrollada en HTML, CSS y JavaScript puro, que permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) con persistencia de datos utilizando localStorage del navegador.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .task-container {
+            width: 400px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .task-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-group button {
+            padding: 10px;
+            font-size: 16px;
+            margin-left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .input-group button:hover {
+            background-color: #45a049;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-list li {
+            background-color: #f1f1f1;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-list li.completed {
+            text-decoration: line-through;
+            background-color: #d3ffd3;
+        }
+        .task-list li button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .task-list li button:hover {
+            background-color: #f33;
+        }
+        .task-list li .edit-btn {
+            background-color: #ff9800;
+            margin-right: 10px;
+        }
+        .task-list li .edit-btn:hover {
+            background-color: #f57c00;
+        }
+        .task-list li input {
+            flex: 1;
+            font-size: 16px;
+            padding: 5px;
+            border: none;
+            background: none;
+        }
+    </style>
+</head>
+<body>
 
-✅ Funcionalidades principales
-Agregar tarea: Escribe una tarea en el campo de entrada y haz clic en "Agregar" para añadirla a la lista.
+    <div class="task-container">
+        <h1>Task Manager - CRUD</h1>
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Nueva tarea...">
+            <button onclick="addTask()">Agregar</button>
+        </div>
+        <ul id="taskList" class="task-list">
+            <!-- Las tareas aparecerán aquí -->
+        </ul>
+    </div>
 
-Ver tareas: Las tareas se muestran automáticamente en la interfaz al cargar la página.
+    <script>
+        // Cargar tareas desde el localStorage
+        window.onload = function() {
+            loadTasks();
+        };
 
-Editar tarea directamente: Haz clic sobre el nombre de una tarea y edítala directamente desde el panel. Al salir del campo de texto, la tarea se actualizará automáticamente.
+        function loadTasks() {
+            const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskListContainer = document.getElementById('taskList');
+            taskListContainer.innerHTML = '';  // Limpiar lista
 
-Marcar como completada: Haz clic en el botón "Completado" para marcar una tarea como realizada (aparece tachada y cambia de color).
+            taskList.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.classList.toggle('completed', task.completed);
+                li.innerHTML = `
+                    <input type="text" value="${task.name}" onblur="updateTask(${index}, this.value)" onclick="editTask(this)">
+                    <button class="edit-btn" onclick="toggleTaskStatus(${index})">Completado</button>
+                    <button onclick="removeTask(${index})">Eliminar</button>
+                `;
+                taskListContainer.appendChild(li);
+            });
+        }
 
-Eliminar tarea: Haz clic en "Eliminar" para borrar una tarea de la lista.
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskValue = taskInput.value.trim();
 
-Persistencia de datos: Las tareas se guardan en el localStorage, por lo que no se pierden al recargar la página.
+            if (taskValue === '') {
+                alert('Por favor ingresa una tarea.');
+                return;
+            }
 
-🏗️ Estructura del proyecto
-Solo necesitas un archivo HTML (no requiere dependencias externas):
+            const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
+            const newTask = { name: taskValue, completed: false };
 
-bash
-Copy
-Edit
-/index.html
-Todo el HTML, CSS y JavaScript están integrados en este archivo.
+            taskList.push(newTask);
+            localStorage.setItem('tasks', JSON.stringify(taskList));
+            taskInput.value = '';  // Limpiar campo
+            loadTasks();
+        }
 
-🚀 Cómo usarlo
-Descarga o copia el archivo index.html.
+        function toggleTaskStatus(index) {
+            const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
+            taskList[index].completed = !taskList[index].completed;
+            localStorage.setItem('tasks', JSON.stringify(taskList));
+            loadTasks();
+        }
 
-Ábrelo en cualquier navegador web moderno (Chrome, Firefox, Edge, etc.).
+        function removeTask(index) {
+            const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
+            taskList.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(taskList));
+            loadTasks();
+        }
 
-Comienza a gestionar tus tareas directamente.
+        function editTask(inputElement) {
+            inputElement.select(); // Selecciona el texto al hacer clic
+        }
 
-📂 Explicación del código
-🖥️ HTML
-Contiene la estructura de la app:
+        function updateTask(index, newName) {
+            const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
+            if (newName.trim() !== '') {
+                taskList[index].name = newName.trim();
+                localStorage.setItem('tasks', JSON.stringify(taskList));
+            }
+            loadTasks();
+        }
+    </script>
 
-Título
-
-Campo de entrada
-
-Botón "Agregar"
-
-Lista de tareas dinámicamente generada
-
-🎨 CSS
-Diseño simple y responsivo.
-
-Estilo visual agradable:
-
-Caja blanca centrada
-
-Botones con colores y hover
-
-Tareas completadas con fondo verde y texto tachado
-
-⚙️ JavaScript
-Implementa todas las funcionalidades CRUD:
-
-Función	Descripción
-loadTasks()	Carga las tareas desde localStorage y las muestra en la lista.
-addTask()	Agrega una nueva tarea al localStorage y la muestra.
-toggleTaskStatus()	Cambia el estado completado/incompleto de una tarea.
-removeTask()	Elimina una tarea del localStorage y de la lista.
-editTask()	Selecciona el texto del input de la tarea al hacer clic (para edición directa).
-updateTask()	Actualiza el nombre de una tarea en localStorage al salir del campo de texto.
-
-📝 Consideraciones
-No requiere frameworks ni bibliotecas externas.
-
-Funciona offline.
-
-Solo usa localStorage para persistir datos en el navegador actual.
-
-Compatible con navegadores modernos.
-
-💡 Mejoras posibles
-Agregar filtro de tareas completadas/pending.
-
-Integrar una base de datos externa para persistencia multiusuario.
-
-Añadir validaciones más avanzadas (por ejemplo, nombres duplicados).
-
-Implementar notificaciones o confirmaciones al eliminar tareas.
-
-🧑‍💻 Autor
-Desarrollado por Esteban Marín Astúa
+</body>
+</html>
