@@ -99,8 +99,8 @@
     <div class="task-container">
         <h1>Task Manager - CRUD</h1>
         <div class="input-group">
-            <input type="text" id="taskInput" placeholder="Nueva tarea...">
-            <button onclick="addTask()">Agregar</button>
+            <input type="text" id="taskInput" placeholder="New task...">
+            <button onclick="addTask()">Add</button>
         </div>
         <ul id="taskList" class="task-list">
             <!-- Las tareas aparecerán aquí -->
