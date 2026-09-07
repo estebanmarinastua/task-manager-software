@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,11 +78,11 @@
         .task-list li button:hover {
             background-color: #f33;
         }
-        .task-list li .status-btn {
+        .task-list li .edit-btn {
             background-color: #ff9800;
             margin-right: 10px;
         }
-        .task-list li .status-btn:hover {
+        .task-list li .edit-btn:hover {
             background-color: #f57c00;
         }
         .task-list li input {
@@ -95,19 +95,20 @@
     </style>
 </head>
 <body>
+
     <div class="task-container">
         <h1>Task Manager - CRUD</h1>
         <div class="input-group">
-            <input type="text" id="taskInput" placeholder="New task...">
-            <button onclick="addTask()">Add</button>
+            <input type="text" id="taskInput" placeholder="Nueva tarea...">
+            <button onclick="addTask()">Agregar</button>
         </div>
         <ul id="taskList" class="task-list">
-            <!-- Tasks will appear here -->
+            <!-- Las tareas aparecerán aquí -->
         </ul>
     </div>
 
     <script>
-        // Load tasks from localStorage
+        // Cargar tareas desde el localStorage
         window.onload = function() {
             loadTasks();
         };
@@ -115,15 +116,15 @@
         function loadTasks() {
             const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
             const taskListContainer = document.getElementById('taskList');
-            taskListContainer.innerHTML = ''; // Clear list
-            
+            taskListContainer.innerHTML = '';  // Limpiar lista
+
             taskList.forEach((task, index) => {
                 const li = document.createElement('li');
                 li.classList.toggle('completed', task.completed);
                 li.innerHTML = `
-                    <input type="text" value="${task.name}" onblur="updateTask(${index}, this.value)" onclick="selectTaskText(this)">
-                    <button class="status-btn" onclick="toggleTaskStatus(${index})">Complete</button>
-                    <button onclick="removeTask(${index})">Delete</button>
+                    <input type="text" value="${task.name}" onblur="updateTask(${index}, this.value)" onclick="editTask(this)">
+                    <button class="edit-btn" onclick="toggleTaskStatus(${index})">Completado</button>
+                    <button onclick="removeTask(${index})">Eliminar</button>
                 `;
                 taskListContainer.appendChild(li);
             });
@@ -132,18 +133,18 @@
         function addTask() {
             const taskInput = document.getElementById('taskInput');
             const taskValue = taskInput.value.trim();
-            
+
             if (taskValue === '') {
-                alert('Please input your task:');
+                alert('PLease input your task:');
                 return;
             }
-            
+
             const taskList = JSON.parse(localStorage.getItem('tasks')) || [];
             const newTask = { name: taskValue, completed: false };
+
             taskList.push(newTask);
             localStorage.setItem('tasks', JSON.stringify(taskList));
-            
-            taskInput.value = ''; // Clear field
+            taskInput.value = '';  // Limpiar campo
             loadTasks();
         }
 
@@ -161,8 +162,8 @@
             loadTasks();
         }
 
-        function selectTaskText(inputElement) {
-            inputElement.select(); // Select text on click
+        function editTask(inputElement) {
+            inputElement.select(); // Selecciona el texto al hacer clic
         }
 
         function updateTask(index, newName) {
@@ -174,5 +175,6 @@
             loadTasks();
         }
     </script>
+
 </body>
 </html>
