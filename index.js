@@ -135,7 +135,7 @@
             const taskValue = taskInput.value.trim();
 
             if (taskValue === '') {
-                alert('Por favor ingresa una tarea.');
+                alert('PLease input your task:');
                 return;
             }
 
